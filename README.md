@@ -13,7 +13,8 @@ private and do not redirect it to a log file.
 
 - macOS or Linux computer with Python 3
 - Frida CLI (`frida` from `frida-tools`) available on `PATH`
-- Android phone with the official Modena Seamless app installed and logged in
+- A rooted (or temporarily rooted) Android phone with the official Modena
+  Seamless app installed and logged in — see "About root" below
 - Frida server running on the phone with sufficient privileges
 - ADB/Frida USB connection working (`frida-ps -U` should list the app)
 - The target device ID (Tuya `device_id` / `gwId`)
@@ -32,9 +33,29 @@ CPU architecture.
 The default app identifier is `com.modenasmart.app`. Use `--package` if your
 Modena app build uses a different Android package identifier.
 
-The hook's SDK bean class names were validated with Modena Seamless 2.5.1 on
-Android 16 and an ES-15-SKY heater. Other app versions or Modena products may
-use different SDK classes and may need a hook update.
+### About root
+
+`frida-server` needs root privileges on the phone to attach to another app's
+process (this is a normal Android/Frida requirement, not specific to Modena
+or this tool). If your phone isn't already rooted, you'll need either a
+standard root solution (e.g. Magisk, KernelSU) or a temporary-root method
+that works for your specific device and software version. How to get root on
+your particular phone is outside the scope of this tool/README — search for
+guidance specific to your device model and current firmware. This repo does
+not bundle or recommend any particular root/exploit method.
+
+### Device scope
+
+This tool is not limited to water heaters. `DeviceBean` / `DeviceRespBean` are
+generic Tuya SDK classes that represent *every* device type in a Tuya-based
+app (fans, air conditioners, switches, etc.), not just water heaters — so the
+same hook should work for any Modena device that uses the Modena Seamless app,
+as long as the app build uses the same (or compatible) SDK version. The hook
+was only *validated end-to-end* with Modena Seamless 2.5.1 on Android 16
+against an ES-15-SKY water heater; other app versions may rename or
+restructure these classes, in which case the class names in
+`dump_target_local_key.js` would need updating. If it doesn't find your
+device, open an issue with the app version you're using and what you tried.
 
 ## Usage
 

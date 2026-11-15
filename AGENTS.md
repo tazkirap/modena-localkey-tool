@@ -38,13 +38,32 @@ Assistant's `tuya_local` integration (or similar local-Tuya tooling).
    in a venv is fine). Confirm with `frida --version`.
 2. An Android phone with the Modena Seamless app installed, logged in, and
    with the target device's page already open (so its SDK object is loaded).
-3. Frida server running on the phone with enough privilege to attach to the
+3. **Root (or temporary root) on the phone.** `frida-server` needs root to
+   attach to another app's process — this is a normal Android/Frida
+   requirement, not something specific to this tool. If the user's phone
+   isn't rooted, that is a separate task from this tool (standard root via
+   Magisk/KernelSU, or a device/firmware-specific temp-root method); this
+   repo intentionally does not bundle or recommend any particular
+   root/exploit method, so point the user to guidance for their own device
+   model rather than improvising an exploit yourself.
+4. Frida server running on the phone with enough privilege to attach to the
    app, and reachable over USB/ADB. Confirm with `frida-ps -U` — the app
    should appear in the list before you attach.
-4. The user must supply the Tuya `device_id` (`gwId`) themselves. Do not
+5. The user must supply the Tuya `device_id` (`gwId`) themselves. Do not
    guess it or enumerate it from the device list — ask for it, or help them
    find their own device's ID through their own Tuya/Smart Life/OEM app or
    `tinytuya scan` on their own network.
+
+## Device scope
+
+This tool is not limited to water heaters. It is not restricted by device
+*type* — `DeviceBean` / `DeviceRespBean` are generic Tuya SDK classes shared
+by every device type in a Tuya-based app (fans, air conditioners, switches,
+etc.), so the same hook should work for any Modena device, not just the
+ES-15-SKY water heater it was validated against. The per-run restriction is
+to exactly *one* `device_id` at a time (the one the user asked for), which is
+a privacy safeguard, not a device-category limitation. Don't tell a user this
+only works for water heaters.
 
 ## How to run it
 
@@ -66,11 +85,13 @@ config flow) and do not persist it anywhere else.
 See the "Troubleshooting" section of `README.md` first; it covers the common
 failures (`Unable to connect to remote frida-server`, `Failed to attach`,
 `targetFound: false`, no event within the timeout). This tool was validated
-against Modena Seamless 2.5.1 on Android 16 with an ES-15-SKY water heater;
-other app versions or Modena products may use different SDK class names, in
-which case `dump_target_local_key.js` may need the class list updated — do
-this only with the user's informed consent, since it touches instrumentation
-of their app.
+end-to-end against Modena Seamless 2.5.1 on Android 16 with an ES-15-SKY
+water heater, but the underlying SDK classes are generic to the app, not the
+device type (see "Device scope" above). Different *app versions* (not device
+types) may use different SDK class names, in which case
+`dump_target_local_key.js` may need the class list updated — do this only
+with the user's informed consent, since it touches instrumentation of their
+app.
 
 ## Scope
 
