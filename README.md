@@ -1,5 +1,8 @@
 # Modena Local Key Tool
 
+<img width="240" height="240" alt="image" src="https://github.com/user-attachments/assets/7c8d789b-1629-4ef4-ad76-98912dad2bba" />
+
+
 Read the Tuya `localKey` for a Modena device from the Modena Seamless app's
 live SDK objects using Frida. The hook only emits a key when the device ID
 matches the ID supplied by the user.
